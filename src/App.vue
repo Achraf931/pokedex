@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="bg-yellow-300 h-screen max-w-screen w-full">
     <Nav/>
     <router-view/>
   </main>

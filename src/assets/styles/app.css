@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Rainy";
+    src: url("../rainyhearts.ttf");
+    font-weight: normal;
+}
+
+* {
+    font-family: Rainy, Helvetica, Arial, sans-serif;
+}
