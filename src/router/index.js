@@ -11,7 +11,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      authRequired: false
+      requiredAuth: false
     }
   },
   {
@@ -19,7 +19,7 @@ const routes = [
     name: 'Register',
     component: Register,
     meta: {
-      authRequired: false
+      requiredAuth: false
     }
   },
   {
@@ -27,51 +27,50 @@ const routes = [
     name: 'Pokedex',
     component: Pokedex,
     meta: {
-      authRequired: true
+      requiredAuth: true
     }
   },
 ]
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
 
 router.beforeEach(async (to, from, next) => {
-  const authData = store.getters["auth/getAuthData"];
-
-  if (!authData.token) {
+  if (!store.getters["auth/getAuthData"].token) {
     const access_token = localStorage.getItem("access_token");
     const refresh_token = localStorage.getItem("refresh_token");
     if (access_token) {
-      authData.token = access_token
-      authData.refreshToken = refresh_token
-
-      store.commit("auth/saveTokenData", authData);
+      const data = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+      };
+      store.commit("auth/saveTokenData", data);
     }
   }
- let auth = store.getters["auth/isTokenActive"];
+  let auth = store.getters["auth/isTokenActive"];
 
-   if (!auth) {
-     if (authData.token) {
-       const refreshResponse = await axios({
-         method: 'POST',
-         url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/`,
-         data: {refresh: authData.refreshToken},
-         headers: {
-           'Access-Control-Allow-Origin': '*',
-           'Content-type': 'application/json',
-         }
-       });
-       authData.token = refreshResponse.data.access
-       store.commit("auth/saveTokenData", authData);
-       auth = true;
-     }
-   }
+  if (!auth) {
+    const authData = store.getters["auth/getAuthData"];
+    if (authData.token) {
+      const refreshResponse = await axios({
+        method: 'POST',
+        url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/`,
+        data: {refresh: authData.refreshToken},
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-type': 'application/json',
+        }
+      });
+      store.commit("auth/saveTokenData", refreshResponse.data);
+      auth = true;
+    }
+  }
 
   if (to.fullPath == "/") {
     return next();
-  } else if (auth && to.meta.requiredAuth) {
+  } else if (auth && !to.meta.requiredAuth) {
     return next({ path: "/pokedex" });
   } else if (!auth && to.meta.requiredAuth) {
     return next({ path: "/register" });
@@ -79,5 +78,3 @@ router.beforeEach(async (to, from, next) => {
 
   return next();
 });
-
-export default router

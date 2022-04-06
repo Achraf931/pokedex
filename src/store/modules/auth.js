@@ -1,15 +1,13 @@
-import {tokenAlive} from "@/shared/jwtHelper";
+import { tokenAlive } from "@/shared/jwtHelper";
 import axios from "axios";
-
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-
 const state = () => ({
     authData: {
         token: "",
         refreshToken: "",
         tokenExp: "",
-        username: "",
-        email: ""
+        userId: "",
+        userName: "",
+        email: "",
     },
     loginStatus: "",
 });
@@ -42,7 +40,7 @@ const actions = {
                 'Content-type': 'application/json',
             }
         })
-            .then(async res => {
+            .then(async () => {
                 await axios({
                     method: 'POST',
                     url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/`,
@@ -56,11 +54,10 @@ const actions = {
                 })
                     .then(response => {
                         let object = {
-                            access: response.data.access,
-                            refresh: response.data['refresh'],
-                            username: payload.username,
-                            email: payload.email,
-                            exp: 6720273453
+                            access_token: response.data.access,
+                            refresh_token: response.data['refresh'],
+                            userName: payload.username,
+                            email: payload.email
                         }
 
                         if (response && response.data) {
@@ -74,21 +71,24 @@ const actions = {
             .catch((err) => {
                 console.log(err);
             });
-    },
+    }
 };
 
 const mutations = {
     saveTokenData(state, data) {
-        localStorage.setItem("access_token", data.access);
-        localStorage.setItem("refresh_token", data['refresh']);
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
 
-        state.authData = {
-            token: data.access,
-            refreshToken: data['refresh'],
-            tokenExp: data.exp,
-            username: data.username,
-            email: data.email
+        //const jwtDecodedValue = jwtDecrypt(data.access_token);
+        const newTokenData = {
+            token: data.access_token,
+            refreshToken: data.refresh_token,
+            tokenExp: 6782635241432,
+            userName: data.userName,
+            email: data.email,
         };
+
+        state.authData = newTokenData;
     },
     setLoginStatus(state, value) {
         state.loginStatus = value;
