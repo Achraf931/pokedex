@@ -1,5 +1,5 @@
 <template>
-  <main class="bg-yellow-300 h-screen max-w-screen w-full">
+  <main class="h-screen max-w-screen w-full flex flex-col">
     <Nav/>
     <router-view/>
   </main>
@@ -8,3 +8,9 @@
 <script setup>
   import Nav from "@/components/Nav";
 </script>
+
+<style scoped>
+main {
+  background: #F3F4F2;
+}
+</style>

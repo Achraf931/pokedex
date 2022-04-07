@@ -1,13 +1,11 @@
-import { tokenAlive } from "@/shared/jwtHelper";
 import axios from "axios";
+
 const state = () => ({
     authData: {
-        token: "",
-        refreshToken: "",
-        tokenExp: "",
-        userId: "",
-        userName: "",
-        email: "",
+        token: localStorage.getItem('access_token')?? "",
+        refreshToken: localStorage.getItem('refresh_token')?? "",
+        userName: localStorage.getItem('refresh_token')?.userName?? "",
+        email: localStorage.getItem('refresh_token')?.email?? "",
     },
     loginStatus: "",
 });
@@ -20,21 +18,22 @@ const getters = {
         return state.authData;
     },
     isTokenActive(state) {
-        if (!state.authData.tokenExp) {
+        if (!state.authData.token) {
             return false;
         }
-        return tokenAlive(state.authData.tokenExp);
+
+        const exp = state.authData.token.split('.')[1];
+        const json = JSON.parse(atob(exp));
+        return json.exp * 1000 > + new Date();
     },
 };
 
 const actions = {
-    async register({ commit }, payload) {
+    async register({ commit, dispatch }, payload) {
         await axios({
             method: 'POST',
             url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/users/register/`,
-            data: {
-                'username': payload.username, 'email': payload.email, 'password': payload.password
-            },
+            data: payload,
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Content-type': 'application/json',
@@ -45,7 +44,7 @@ const actions = {
                     method: 'POST',
                     url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/`,
                     data: {
-                        'username': payload.username, 'password': payload.password
+                        username: payload.username, password: payload.password
                     },
                     headers: {
                         'Access-Control-Allow-Origin': '*',
@@ -61,8 +60,11 @@ const actions = {
                         }
 
                         if (response && response.data) {
-                            commit("saveTokenData", object);
+                            commit("setTokens", object);
+                            commit("setUser", object);
                             commit("setLoginStatus", "success");
+
+                            window.setTimeout(() => dispatch('refreshToken'), 1000 * 60 * 5 - 50)
                         } else {
                             commit("setLoginStatus", "failed");
                         }
@@ -71,28 +73,43 @@ const actions = {
             .catch((err) => {
                 console.log(err);
             });
+    },
+    refreshToken({ commit, state, dispatch }, payload) {
+        axios({
+            method: 'POST',
+            url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/`,
+            data: {refresh: payload?? state.authData.refreshToken},
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-type': 'application/json',
+            }
+        }).then(response => {
+            commit('setNewToken', response.data.access);
+            window.setTimeout(() => dispatch('refreshToken'), 1000 * 60 * 5 - 50);
+        })
     }
 };
 
 const mutations = {
-    saveTokenData(state, data) {
+    setTokens(state, data) {
+        state.authData.token = data.access_token
+        state.authData.refreshToken = data.refresh_token
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
-
-        //const jwtDecodedValue = jwtDecrypt(data.access_token);
-        const newTokenData = {
-            token: data.access_token,
-            refreshToken: data.refresh_token,
-            tokenExp: 6782635241432,
-            userName: data.userName,
-            email: data.email,
-        };
-
-        state.authData = newTokenData;
+        localStorage.setItem('exp', `${new Date() / 1}`);
+    },
+    setUser(state, data) {
+        state.authData.userName = data.userName;
+        state.authData.email = data.email;
+        localStorage.setItem('user', JSON.stringify({userName: data.userName, email: data.email}))
     },
     setLoginStatus(state, value) {
         state.loginStatus = value;
     },
+    setNewToken(state, value) {
+        state.authData.token = value;
+        localStorage.setItem("access_token", value);
+    }
 };
 
 export default {

@@ -38,32 +38,18 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (!store.getters["auth/getAuthData"].token) {
-    const access_token = localStorage.getItem("access_token");
-    const refresh_token = localStorage.getItem("refresh_token");
-    if (access_token) {
-      const data = {
-        access_token: access_token,
-        refresh_token: refresh_token,
-      };
-      store.commit("auth/saveTokenData", data);
-    }
-  }
+  let exp = localStorage.getItem('exp')?? 0;
+  let currentDate = new Date() / 1;
+
+  if (exp === 0 || exp >= currentDate) localStorage.clear();
+
   let auth = store.getters["auth/isTokenActive"];
 
   if (!auth) {
     const authData = store.getters["auth/getAuthData"];
     if (authData.token) {
-      const refreshResponse = await axios({
-        method: 'POST',
-        url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/`,
-        data: {refresh: authData.refreshToken},
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-type': 'application/json',
-        }
-      });
-      store.commit("auth/saveTokenData", refreshResponse.data);
+      store.dispatch('auth/refreshToken');
+
       auth = true;
     }
   }

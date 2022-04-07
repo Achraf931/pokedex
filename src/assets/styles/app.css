@@ -10,4 +10,5 @@
 
 * {
     font-family: Rainy, Helvetica, Arial, sans-serif;
+    user-select: none;
 }

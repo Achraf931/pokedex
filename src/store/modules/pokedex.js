@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const state = () => ({
     pokedex: []
 });
@@ -29,7 +30,7 @@ const actions = {
 const mutations = {
     setPokedex(state, value) {
         state.pokedex = value;
-    },
+    }
 };
 
 export default {
