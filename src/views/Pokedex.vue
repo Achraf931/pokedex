@@ -29,7 +29,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      selected: {}
+      selected: null
     }
   },
   computed: {
@@ -58,7 +58,7 @@ export default {
     }
   },
   mounted() {
-    this.actionGet().then(() => this.selected = this.getterPokedex.results.length > 0 ? this.getterPokedex.results[0] : {})
+    this.actionGet().then(() => this.selected = this.getterPokedex.results.length > 0 ? this.getterPokedex.results[0] : null)
   }
 };
 </script>

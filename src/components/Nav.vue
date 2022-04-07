@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <div>
+    <div v-if="!user">
       <router-link to="/register" class="nav-item ml-auto" >
         <span>Register</span>
       </router-link>

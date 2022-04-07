@@ -32,23 +32,15 @@ const actions = {
     async register({ commit, dispatch }, payload) {
         await axios({
             method: 'POST',
-            url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/users/register/`,
-            data: payload,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-type': 'application/json',
-            }
+            url: `${process.env.VUE_APP_API}/api/users/register/`,
+            data: payload
         })
             .then(async () => {
                 await axios({
                     method: 'POST',
-                    url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/`,
+                    url: `${process.env.VUE_APP_API}/api/token/`,
                     data: {
                         username: payload.username, password: payload.password
-                    },
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-type': 'application/json',
                     }
                 })
                     .then(response => {
@@ -63,8 +55,6 @@ const actions = {
                             commit("setTokens", object);
                             commit("setUser", object);
                             commit("setLoginStatus", "success");
-
-                            window.setTimeout(() => dispatch('refreshToken'), 1000 * 60 * 5 - 50)
                         } else {
                             commit("setLoginStatus", "failed");
                         }
@@ -73,20 +63,6 @@ const actions = {
             .catch((err) => {
                 console.log(err);
             });
-    },
-    refreshToken({ commit, state, dispatch }, payload) {
-        axios({
-            method: 'POST',
-            url: `https://cors-anywhere.herokuapp.com/https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/`,
-            data: {refresh: payload?? state.authData.refreshToken},
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-type': 'application/json',
-            }
-        }).then(response => {
-            commit('setNewToken', response.data.access);
-            window.setTimeout(() => dispatch('refreshToken'), 1000 * 60 * 5 - 50);
-        })
     }
 };
 

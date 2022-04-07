@@ -1,11 +1,12 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-import {router} from '@/router'
-import store from './store'
+import { createApp } from 'vue';
+import App from './App.vue';
+import './registerServiceWorker';
+import {router} from '@/router';
+import store from './store';
 import '@/assets/styles/app.css';
-import './assets/tailwind.css'
+import '@/assets/tailwind.css';
+import '@/shared/jwtInterceptor';
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(store).use(router).mount('#app')
+app.use(store).use(router).mount('#app');

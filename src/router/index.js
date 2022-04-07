@@ -38,21 +38,12 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  let exp = localStorage.getItem('exp')?? 0;
-  let currentDate = new Date() / 1;
+  const exp = localStorage.getItem('exp')?? 0,
+      currentDate = new Date() / 1;
 
   if (exp === 0 || exp >= currentDate) localStorage.clear();
 
-  let auth = store.getters["auth/isTokenActive"];
-
-  if (!auth) {
-    const authData = store.getters["auth/getAuthData"];
-    if (authData.token) {
-      store.dispatch('auth/refreshToken');
-
-      auth = true;
-    }
-  }
+  const auth = store.getters["auth/isTokenActive"];
 
   if (to.fullPath == "/") {
     return next();
