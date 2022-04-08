@@ -1,34 +1,26 @@
 import axios from "axios";
 
 const state = () => ({
-    pokemons: {}
+    pokedex: {}
 });
 
 const getters = {
-    getPokemons(state) {
-        return state.pokemons
+    getPokedex(state) {
+        return state.pokedex
     }
 };
 
 const actions = {
-    async pokemons({ commit }) {
+    async pokedex({ commit }) {
         let response = await axios({
             method: 'GET',
-            url: `${process.env.VUE_APP_API}/pokemon/`
+            url: `${process.env.VUE_APP_API}/pokedex/`
         })
 
+        console.log(response)
         if (response && response.data) {
-            commit('setPokemons', response.data)
+            commit('setPokedex', response.data)
         }
-    },
-    newPokemon({ dispatch }, data) {
-        axios({
-            method: 'POST',
-            url: `${process.env.VUE_APP_API}/pokemon/`,
-            data: data
-        }).then(() => {
-            dispatch('pokemons');
-        })
     },
     async paginate({ commit, dispatch }, direction) {
         let response = await axios({
@@ -37,14 +29,14 @@ const actions = {
         });
 
         if (response && response.data) {
-            commit('setPokemons', response.data)
+            commit('setPokedex', response.data)
         }
     }
 };
 
 const mutations = {
-    setPokemons(state, value) {
-        state.pokemons = value;
+    setPokedex(state, value) {
+        state.pokedex = value;
     }
 };
 

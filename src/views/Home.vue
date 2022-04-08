@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex-1 p-10">
     <p>home</p>
   </div>
 </template>

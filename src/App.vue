@@ -11,7 +11,7 @@
 
 <style>
 .router-link-exact-active {
-  color: rgba(255, 204, 0, .6);
+  color: #FFCB02;
   -webkit-text-stroke: .01px black;
 }
 
@@ -20,6 +20,10 @@ main {
 }
 
 .bg-custom {
-  background: rgba(255, 204, 0, .6);
+  background: #FFCB02;
+}
+
+.bg-custom-blue {
+  background: #2E6FB5;
 }
 </style>
