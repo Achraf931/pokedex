@@ -4,7 +4,6 @@ import './registerServiceWorker';
 import {router} from '@/router';
 import store from './store';
 import '@/assets/styles/app.css';
-import '@/assets/tailwind.css';
 import '@/shared/jwtInterceptor';
 
 const app = createApp(App);
