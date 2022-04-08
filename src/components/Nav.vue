@@ -6,16 +6,13 @@
         <router-link to="/" class="nav-item block">
           <span class="block">Home</span>
         </router-link>
-        <router-link to="/pokedex" class="nav-item block" v-if="user">
+        <router-link v-if="user.token === ''" to="/register" class="nav-item block" >
+          <span class="block">Register</span>
+        </router-link>
+        <router-link to="/pokedex" class="nav-item block" v-else>
           <span class="block">Pokedex</span>
         </router-link>
       </div>
-    </div>
-
-    <div v-if="!user">
-      <router-link to="/register" class="nav-item ml-auto" >
-        <span>Register</span>
-      </router-link>
     </div>
   </nav>
 </template>

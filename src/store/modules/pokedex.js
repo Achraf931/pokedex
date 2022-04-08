@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const state = () => ({
-    pokedex: []
+    pokedex: {}
 });
 
 const getters = {
@@ -14,8 +14,19 @@ const actions = {
     async pokedex({ commit }) {
         let response = await axios({
             method: 'GET',
-            url: `${process.env.VUE_APP_API}/pokedex/?limit=50&offset=50`
+            url: `${process.env.VUE_APP_API}/pokedex/`
         })
+
+        console.log(response)
+        if (response && response.data) {
+            commit('setPokedex', response.data)
+        }
+    },
+    async paginate({ commit, dispatch }, direction) {
+        let response = await axios({
+            method: 'GET',
+            url: direction
+        });
 
         if (response && response.data) {
             commit('setPokedex', response.data)

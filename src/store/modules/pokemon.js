@@ -15,22 +15,30 @@ const actions = {
         let response = await axios({
             method: 'GET',
             url: `${process.env.VUE_APP_API}/pokemon/`
-        }).then(() => {
-
         })
 
         if (response && response.data) {
             commit('setPokemons', response.data)
         }
     },
-    newPokemon({ dispatch }, pokedex_creature) {
+    newPokemon({ dispatch }, data) {
         axios({
             method: 'POST',
             url: `${process.env.VUE_APP_API}/pokemon/`,
-            data: pokedex_creature
+            data: data
         }).then(() => {
             dispatch('pokemons');
         })
+    },
+    async paginate({ commit, dispatch }, direction) {
+        let response = await axios({
+            method: 'GET',
+            url: direction
+        });
+
+        if (response && response.data) {
+            commit('setPokemons', response.data)
+        }
     }
 };
 

@@ -41,7 +41,7 @@ router.beforeEach(async (to, from, next) => {
   const exp = localStorage.getItem('exp')?? 0,
       currentDate = new Date() / 1;
 
-  if (exp === 0 || exp >= currentDate) localStorage.clear();
+  if (exp === 0 || exp <= currentDate) localStorage.clear();
 
   const auth = store.getters["auth/isTokenActive"];
 

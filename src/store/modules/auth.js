@@ -2,10 +2,11 @@ import axios from "axios";
 
 const state = () => ({
     authData: {
+        id: JSON.parse(localStorage.getItem('id'))?.id?? "",
         token: localStorage.getItem('access_token')?? "",
         refreshToken: localStorage.getItem('refresh_token')?? "",
-        userName: localStorage.getItem('refresh_token')?.userName?? "",
-        email: localStorage.getItem('refresh_token')?.email?? "",
+        userName: JSON.parse(localStorage.getItem('user'))?.userName?? "",
+        email: JSON.parse(localStorage.getItem('user'))?.email?? "",
     },
     loginStatus: "",
 });
@@ -59,6 +60,15 @@ const actions = {
                             commit("setLoginStatus", "failed");
                         }
                     })
+                    .then(() => {
+                        axios({
+                            method: 'GET',
+                            url: `${process.env.VUE_APP_API}/api/users/me/`
+                        })
+                            .then(resp => {
+                                commit("setUserId", resp.data.id);
+                            });
+                    });
             })
             .catch((err) => {
                 console.log(err);
@@ -78,6 +88,10 @@ const mutations = {
         state.authData.userName = data.userName;
         state.authData.email = data.email;
         localStorage.setItem('user', JSON.stringify({userName: data.userName, email: data.email}))
+    },
+    setUserId(state, id) {
+        state.authData.id = id;
+        localStorage.setItem('id', JSON.stringify(id))
     },
     setLoginStatus(state, value) {
         state.loginStatus = value;
