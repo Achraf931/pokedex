@@ -1,21 +1,34 @@
 import { get, post } from '@/services'
+import { PartialCredError, RefreshError } from '@/repositories/errors/auth'
 
 export const register = async (user) => {
-  return (
-    await post('api/users/register/', user)
-  ).data
+  try {
+    return (
+      await post('api/users/register/', user)
+    ).data
+  } catch (e) {
+    throw new PartialCredError(e.response.data)
+  }
 }
 
 export const login = async (credentials) => {
-  return (
-    await post('api/token/', credentials)
-  ).data
+  try {
+    return (
+      await post('api/token/', credentials)
+    ).data
+  } catch (e) {
+    throw new PartialCredError(e.response.data)
+  }
 }
 
 export const refresh = async (refresh) => {
-  return (
-    await post('api/token/refresh/', { refresh })
-  ).data
+  try {
+    return (
+      await post('api/token/refresh/', { refresh })
+    ).data
+  } catch (e) {
+    throw new RefreshError()
+  }
 }
 
 export const me = async () => {

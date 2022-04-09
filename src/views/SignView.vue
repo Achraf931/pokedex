@@ -4,6 +4,7 @@
     <input type="password" placeholder="password" v-model="password">
     <button type="submit">send</button>
   </form>
+  <p v-if="error !== ''">{{ error }}</p>
 </template>
 
 <script setup>
@@ -13,16 +14,21 @@ import router from '@/router'
 
 const username = ref('')
 const password = ref('')
+const error = ref('')
 
 const login = async () => {
-  const response = await action({
-    username: username.value,
-    password: password.value
-  })
+  try {
+    const response = await action({
+      username: username.value,
+      password: password.value
+    })
 
-  if (response.access) {
-    console.log('yes')
-    router.push('/')
+    if (response.access) {
+      error.value = ''
+      router.push('/')
+    }
+  } catch (e) {
+    error.value = e.message
   }
 }
 </script>
