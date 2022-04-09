@@ -15,15 +15,15 @@ export const get = async (endpoint = '', data) => {
 }
 
 export const post = async (endpoint = '', data) => {
-  await handler.post(endpoint, data)
+  return await handler.post(endpoint, data)
 }
 
 export const put = async (endpoint = '', data) => {
-  await handler.put(endpoint, data)
+  return await handler.put(endpoint, data)
 }
 
 export const patch = async (endpoint = '', data) => {
-  await handler.patch(endpoint, data)
+  return await handler.patch(endpoint, data)
 }
 
 export const del = async (endpoint = '', data) => {

@@ -14,7 +14,7 @@ export const login = async (credentials) => {
 
 export const refresh = async (refresh) => {
   return (
-    await post('api/token/refresh/', refresh)
+    await post('api/token/refresh/', { refresh })
   ).data
 }
 

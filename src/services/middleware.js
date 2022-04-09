@@ -9,15 +9,14 @@ const requestToken = async () => {
     throw new Error('Attempt to refresh session without token')
   }
 
-  const accessToken = (await refresh(refreshToken)).access
-  token = accessToken
-  localStorage.setItem('token', accessToken)
+  token = (await refresh(refreshToken)).access
+  localStorage.setItem('token', token)
 
-  return accessToken
+  return token
 }
 
 export const setup = handler => {
-  handler.interceptors.request.use((config) => {
+  handler.interceptors.request.use(config => {
     if (token === null) {
       return config
     }
@@ -30,7 +29,7 @@ export const setup = handler => {
   })
 
   handler.interceptors.response.use(
-    (config) => {
+    config => {
       if (config.data?.access) {
         token = config.data?.access
         localStorage.setItem('token', token)
@@ -44,9 +43,9 @@ export const setup = handler => {
       return config
     },
 
-    async (error) => {
+    async error => {
       if (typeof error.response === 'object') {
-        const config = error.config & { _retry }
+        const config = error.config
 
         if (error.response.status === 401 && !config._retry) {
           config._retry = true

@@ -30,6 +30,6 @@ export const remove = async id => {
 
 export const giveXP = async (id, amount) => {
   return (
-    await post(`pokemon/${id}/`, amount)
+    await post(`pokemon/${id}/give_xp/`, { amount })
   )
 }

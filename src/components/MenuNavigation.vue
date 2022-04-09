@@ -6,22 +6,31 @@
         <router-link to="/" class="group block">
           <span class="block group-hover:translate-y-[-10px]">Home</span>
         </router-link>
-        <router-link to="/register" class="group block" >
+        <router-link v-if="!user.id" to="/sign" class="group block" >
           <span class="block group-hover:translate-y-[-10px]">Register</span>
         </router-link>
-        <template>
-          <router-link to="/pokemons" class="group block">
-            <span class="block group-hover:translate-y-[-10px]">Pokemons</span>
-          </router-link>
-          <router-link to="/pokedex" class="group block">
-            <span class="block group-hover:translate-y-[-10px]">Pokedex</span>
-          </router-link>
-        </template>
+        <router-link v-else to="/pokemon" class="group block">
+          <span class="block group-hover:translate-y-[-10px]">Pokédeck</span>
+        </router-link>
+        <p @click="signOut" class="group block">
+          <span class="block group-hover:translate-y-[-10px]">Deco</span>
+        </p>
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
+import { me } from '@/repositories/auth'
+import { ref, onMounted } from 'vue'
+import store, { actionList } from '@/store'
+import router from '@/router'
 
+const user = ref({})
+
+onMounted(async () => {
+  user.value = await me()
+})
+
+const signOut = () => store.dispatch(actionList.logOut).then(() => router.push('/'))
 </script>

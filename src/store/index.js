@@ -5,7 +5,8 @@ const mutationList = {
 }
 
 export const actionList = {
-  detectLoggedIn: 'DETECT_LOGGED_IN'
+  detectLoggedIn: 'DETECT_LOGGED_IN',
+  logOut: 'LOG_OUT'
 }
 
 export default createStore({
@@ -13,6 +14,9 @@ export default createStore({
     loggedIn: localStorage.getItem('refresh_token') !== null
   },
   getters: {
+    getLoggedIn (state) {
+      return state.loggedIn
+    }
   },
   mutations: {
     [mutationList.isLoggedIn] (state, bool) {
@@ -22,6 +26,10 @@ export default createStore({
   actions: {
     [actionList.detectLoggedIn] ({ commit }) {
       commit(mutationList.isLoggedIn, localStorage.getItem('refresh_token') !== null)
+    },
+    [actionList.logOut] ({ commit }) {
+      localStorage.clear()
+      commit(mutationList.isLoggedIn, false)
     }
   },
   modules: {
