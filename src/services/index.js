@@ -1,7 +1,10 @@
 import axios from 'axios'
+import { setup as setupMiddleware } from './middleware'
 
 export const baseURL = process.env.VUE_APP_API
 export const handler = axios.create({ baseURL })
+
+setupMiddleware(handler)
 
 export const get = async (endpoint = '', data) => {
   if (typeof data !== 'undefined') {
