@@ -1,18 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 import store from '@/store'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView
+    component: HomeView,
+    meta: {
+      title: 'Home'
+    }
   },
   {
     path: '/sign',
     name: 'Sign',
     component: () => import('@/views/SignView.vue'),
     meta: {
+      title: 'Sign Page',
       authRequired: false
     }
   },
@@ -21,7 +26,15 @@ const routes = [
     name: 'Pokemon',
     component: () => import('@/views/PokemonView.vue'),
     meta: {
+      title: 'Pokédeck',
       authRequired: true
+    }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: NotFoundView,
+    meta: {
+      title: '404'
     }
   }
 ]
@@ -32,6 +45,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  document.title = to.matched[0].meta.title
+
   const isLoggedIn = store.getters.getLoggedIn
 
   if (to.fullPath === '/') {

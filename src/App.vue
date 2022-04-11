@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="flex flex-col h-screen w-screen">
     <MenuNavigation/>
     <router-view/>
   </main>
