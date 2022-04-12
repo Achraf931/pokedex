@@ -1,9 +1,9 @@
 <template>
   <div class="flex-1 flex lg:flex-col justify-between items-center overflow-hidden">
     <div class="sm:py-0 lg:w-full w-7/12 flex flex-col overflow-hidden xl:p-5 p-10 lg:h-1/2 h-full">
-      <input class="xs:text-xs mb-5 w-full outline-none bg-white text-black border-2 border-solid border-black rounded-md px-5 py-2" type="text" placeholder="search" @input="paginate(0)" v-model="searchInput">
+      <input class="xs:text-xs mb-5 w-full outline-none bg-white text-black border-2 border-solid border-black rounded-md px-5 py-2" type="text" placeholder="search" @input="search" v-model="searchInput">
       <section class="snap-y grid grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 auto-rows-min flex-1 overflow-y-scroll overflow-x-hidden w-full gap-3">
-        <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokedex" :key="pokemon.id" :pokemon="pokemon" :ref_number="pokemon.ref_number" />
+        <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokedex" :key="pokemon.id" :pokemon="pokemon" />
       </section>
       <div class="flex items-center justify-between mt-5 w-full">
         <button class="xs:text-xs button" v-if="hasPrev !== null" type="button" @click="paginate(-50)">prev</button>
@@ -49,6 +49,7 @@ import { pokedex as action } from '@/repositories/pokedex'
 import Pokemon from '@/components/Pokemon'
 import { me } from '@/repositories/auth'
 import { add } from '@/repositories/pokemon'
+import store, { actionList } from '@/store'
 
 const selected = ref({})
 const offset = ref(0)
@@ -64,6 +65,12 @@ const openDetails = async pokemon => {
 
 const addPokemon = async id => {
   add({ pokedex_creature: id, trainer: (await me()).id })
+  store.dispatch(actionList.pushNotification, 'Pokemon added to your collection!')
+}
+
+const search = async () => {
+  offset.value = 0
+  paginate(0)
 }
 
 const paginate = async nb => {

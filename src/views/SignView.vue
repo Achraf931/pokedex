@@ -9,19 +9,19 @@
     <form @submit.prevent="sign" class="p-10 max-w-[480px] w-full bg-red-600 rounded-bl-md rounded-br-md flex flex-col gap-10 shadow-[inset_0_-1.5rem_0_0_#89061c,inset_0_-1.7rem_0_0_#000A] border-2 border-solid border-black border-t-0">
       <div>
         <label for="username">Username</label>
-        <input id="username" inputmode="text" type="text" class="input" v-model="username"/>
+        <input id="username" inputmode="text" type="text" v-model="username"/>
       </div>
 
       <template v-if="mode === 'register'">
         <div>
           <label for="email">Email</label>
-          <input id="email" inputmode="email" type="email" class="input" v-model="email"/>
+          <input id="email" inputmode="email" type="email" v-model="email"/>
         </div>
       </template>
 
       <div>
         <label for="password">Password</label>
-        <input id="password" inputmode="text" type="password" class="input" v-model="password"/>
+        <input id="password" inputmode="text" type="password" v-model="password"/>
       </div>
 
       <button type="submit" class="button">
@@ -37,6 +37,7 @@
 import { ref } from 'vue'
 import { login, register } from '@/repositories/auth'
 import router from '@/router'
+import store, { mutationList } from '@/store'
 
 const mode = ref('register')
 const username = ref('')
@@ -62,9 +63,9 @@ const sign = async () => {
     }
 
     if (response.access) {
-      console.log('if')
       error.value = ''
-      router.push({ name: 'Pokemon' })
+      await store.commit(mutationList.isLoggedIn, true)
+      router.push('/pokemon')
     }
   } catch (e) {
     error.value = e.message
@@ -73,7 +74,7 @@ const sign = async () => {
 </script>
 
 <style lang="scss" scoped>
-.input {
+input {
   @apply w-full outline-none bg-green-600 text-black border-2 border-solid border-black rounded-md px-5 py-2;
 }
 

@@ -1,9 +1,12 @@
 <template>
   <div class="flex-1 flex lg:flex-col justify-between items-center overflow-hidden">
     <div class="sm:py-0 lg:w-full w-7/12 flex flex-col overflow-hidden xl:p-5 p-10 lg:h-1/2 h-full">
-      <input class="xs:text-xs mb-5 w-full outline-none bg-white text-black border-2 border-solid border-black rounded-md px-5 py-2" type="text" placeholder="search" @input="paginate(0)" v-model="searchInput">
-      <section class="snap-y grid grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 auto-rows-min flex-1 overflow-y-scroll overflow-x-hidden w-full gap-3">
-        <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokemons.results" :key="pokemon.id" :pokemon="pokemon" :nickname="pokemon.nickname" :ref_number="pokemon.ref_number" />
+      <input class="xs:text-xs mb-5 w-full outline-none bg-white text-black border-2 border-solid border-black rounded-md px-5 py-2" type="text" placeholder="search" @input="search" v-model="searchInput">
+      <section class="relative snap-y grid grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 auto-rows-min flex-1 overflow-y-scroll overflow-x-hidden w-full gap-3">
+        <template v-if="pokemons?.results?.length > 0">
+          <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokemons.results" :key="pokemon.id" :pokemon="pokemon" />
+        </template>
+        <img v-else class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" src="/img/jolteon-pokemon.gif" alt="Loader">
       </section>
       <div class="flex items-center justify-between mt-5 w-full">
         <button class="xs:text-xs button" v-if="hasPrev !== null" type="button" @click="paginate(-50)">prev</button>
@@ -66,25 +69,31 @@ const giveXp = async ({ id, amount = 100 }) => {
 const removePokemon = async ({ id }) => {
   await remove(id)
   pokemons.value.results = pokemons.value.results.filter(pokemon => pokemon.id !== id)
+  selected.value = pokemons.value.results[0]
 }
 
 const openDetails = async pokemon => {
   selected.value = pokemon
 }
 
+const search = () => {
+  offset.value = 0
+  paginate(0)
+}
+
 const paginate = async nb => {
-  await action({ trainer: (await me()).id, offset: offset.value += nb, name: searchInput.value }).then(pokemonsResult => {
-    pokemonsResult.results.every(async item => {
-      item.ref_number = (await getFromPokedex(item.pokedex_creature)).ref_number
-    })
-    pokemons.value = pokemonsResult
-  })
+  const response = await action({ trainer: (await me()).id, offset: offset.value += nb, name: searchInput.value })
+
+  for (const item of response.results) {
+    item.ref_number = (await getFromPokedex(item.pokedex_creature)).ref_number
+  }
+
+  pokemons.value = response
 
   if (pokemons.value.count > 0) {
     hasPrev.value = pokemons.value.previous
     hasNext.value = pokemons.value.next
     selected.value = pokemons.value.results[0]
-    selected.value.ref_number = (await getFromPokedex(pokemons.value.results[0].pokedex_creature)).ref_number
   }
 }
 
@@ -92,3 +101,13 @@ onMounted(async () => {
   paginate(0)
 })
 </script>
+
+<style scoped>
+section {
+  scrollbar-width: none;
+}
+
+section::-webkit-scrollbar {
+  display: none;
+}
+</style>
