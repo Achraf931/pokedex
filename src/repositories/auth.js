@@ -3,8 +3,9 @@ import { PartialCredError, RefreshError } from '@/repositories/errors/auth'
 
 export const register = async (user) => {
   try {
+    await post('api/users/register/', user)
     return (
-      await post('api/users/register/', user)
+      await post('api/token/', { username: user.username, password: user.password })
     ).data
   } catch (e) {
     throw new PartialCredError(e.response.data)

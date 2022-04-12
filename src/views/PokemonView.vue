@@ -16,31 +16,34 @@
 
     <div v-if="selected" class="text-white xl:p-5 p-10 lg:w-full lg:h-1/2 w-2/5 h-full flex flex-col justify-around">
       <div class="md:overflow-y-scroll sm:p-5 bg-red-400 lg:gap-5 flex md:flex-col lg:flex-row lg:items-start flex-col justify-between h-full rounded-md border-2 border-solid border-black p-10">
-        <div class="lg:w-1/2 md:w-full">
-          <div class="flex items-start justify-between">
-            <p class="text-2xl">#{{ selected.pokedex_creature }}</p>
-            <p class="text-xs text-right">{{ selected.legendary ? '' : 'Not ' }}Legendary</p>
-          </div>
-          <img v-if="selected.ref_number" height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.ref_number}.png`" :alt="selected.name">
-        </div>
-        <article class="border-2 border-solid border-white md:w-full lg:w-1/2 p-5 lg:h-full">
-          <h1 class="xs:text-xs font-bold text-center text-xl">{{ selected.nickname?? selected.name }}</h1>
-          <div class="text-white grid grid-cols-2 divide-x-2 divide-white border-t-2 border-b-2 border-solid border-white items-center py-2 mt-5">
-            <div class="h-full flex flex-col justify-between">
-              <p class="text-[10px]">Level</p>
-              <p class="xs:text-xs w-full text-center mx-auto font-bold">{{ selected.level }}</p>
+        <template v-if="pokemons?.results?.length > 0">
+          <div class="lg:w-1/2 md:w-full">
+            <div class="flex items-start justify-between">
+              <p class="text-2xl">#{{ selected.pokedex_creature }}</p>
+              <p class="text-xs text-right">{{ selected.legendary ? '' : 'Not ' }}Legendary</p>
             </div>
-            <div class="h-full flex flex-col justify-between">
-              <p class="text-[10px] text-right">XP</p>
-              <p class="xs:text-xs w-full text-center mx-auto font-bold">{{ selected.experience }}</p>
-            </div>
+            <img v-if="selected.ref_number" height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.ref_number}.png`" :alt="selected.name">
           </div>
+          <article class="border-2 border-solid border-white md:w-full lg:w-1/2 p-5 lg:h-full">
+            <h1 class="xs:text-xs font-bold text-center text-xl">{{ selected.nickname?? selected.name }}</h1>
+            <div class="text-white grid grid-cols-2 divide-x-2 divide-white border-t-2 border-b-2 border-solid border-white items-center py-2 mt-5">
+              <div class="h-full flex flex-col justify-between">
+                <p class="text-[10px]">Level</p>
+                <p class="xs:text-xs w-full text-center mx-auto font-bold">{{ selected.level }}</p>
+              </div>
+              <div class="h-full flex flex-col justify-between">
+                <p class="text-[10px] text-right">XP</p>
+                <p class="xs:text-xs w-full text-center mx-auto font-bold">{{ selected.experience }}</p>
+              </div>
+            </div>
 
-          <template v-if="user.id !== null">
-            <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-5 px-4 py-1 bg-custom hover:opacity-75" @click.prevent="giveXp({ id: selected.id })">Give XP</button>
-            <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-1 px-4 py-1 !bg-red-600 hover:opacity-75" @click.prevent="removePokemon({ id: selected.id })">Delete</button>
-          </template>
-        </article>
+            <template v-if="user.id !== null">
+              <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-5 px-4 py-1 bg-custom hover:opacity-75" @click.prevent="giveXp({ id: selected.id })">Give XP</button>
+              <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-1 px-4 py-1 !bg-red-600 hover:opacity-75" @click.prevent="removePokemon({ id: selected.id })">Delete</button>
+            </template>
+          </article>
+        </template>
+        <p v-else class="text-center flex-1 flex items-center justify-center">You don't have any Pokemon</p>
       </div>
     </div>
   </div>
