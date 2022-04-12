@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-const mutationList = {
+export const mutationList = {
   isLoggedIn: 'IS_LOGGED_IN'
 }
 

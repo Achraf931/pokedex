@@ -35,7 +35,7 @@
 
           <template v-if="user.id !== null">
             <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-5 px-4 py-1 bg-custom hover:opacity-75" @click.prevent="giveXp({ id: selected.id })">Give XP</button>
-            <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-1 px-4 py-1 !bg-red-600 hover:opacity-75" @click.prevent="remove({ id: selected.id })">Delete</button>
+            <button type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-1 px-4 py-1 !bg-red-600 hover:opacity-75" @click.prevent="removePokemon({ id: selected.id })">Delete</button>
           </template>
         </article>
       </div>
@@ -61,6 +61,11 @@ const user = ref({})
 const giveXp = async ({ id, amount = 100 }) => {
   selected.value = (await giveXP(id, amount)).data
   selected.value.ref_number = (await getFromPokedex(selected.value.pokedex_creature)).ref_number
+}
+
+const removePokemon = async ({ id }) => {
+  await remove(id)
+  pokemons.value.results = pokemons.value.results.filter(pokemon => pokemon.id !== id)
 }
 
 const openDetails = async pokemon => {

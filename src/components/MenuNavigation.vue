@@ -6,7 +6,7 @@
         <router-link to="/" class="group block">
           <span class="block group-hover:translate-y-[-10px]">Home</span>
         </router-link>
-        <router-link v-if="!user.id" to="/sign" class="group block" >
+        <router-link v-if="!isLoggedIn" to="/sign" class="group block" >
           <span class="block group-hover:translate-y-[-10px]">Login/Register</span>
         </router-link>
         <template v-else>
@@ -23,15 +23,19 @@
 </template>
 
 <script setup>
-import { me } from '@/repositories/auth'
-import { ref, onMounted } from 'vue'
-import store, { actionList } from '@/store'
+import { ref, onMounted, watch } from 'vue'
+import store, { actionList, mutationList } from '@/store'
 import router from '@/router'
 
-const user = ref({})
+const isLoggedIn = ref(Boolean)
+
+watch(() => store.getters.getLoggedIn, newVal => {
+  store.commit(mutationList.isLoggedIn, newVal)
+  isLoggedIn.value = newVal
+})
 
 onMounted(async () => {
-  user.value = await me()
+  isLoggedIn.value = store.getters.getLoggedIn
 })
 
 const signOut = () => store.dispatch(actionList.logOut).then(() => router.push('/'))

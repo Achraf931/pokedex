@@ -50,7 +50,7 @@ export const partialUpdate = async pokemon => {
   }
 }
 
-export const remove = async ({ id }) => {
+export const remove = async id => {
   try {
     await del(`pokemon/${id}/`)
   } catch (e) {

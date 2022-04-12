@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import PokemonView from '@/views/PokemonView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import store from '@/store'
 
@@ -24,7 +25,7 @@ const routes = [
   {
     path: '/pokemon',
     name: 'Pokemon',
-    component: () => import('@/views/PokemonView.vue'),
+    component: PokemonView,
     meta: {
       title: 'Pokédeck',
       authRequired: true
