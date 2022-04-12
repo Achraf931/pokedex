@@ -18,7 +18,7 @@
             <p class="text-2xl">#{{ selected.id }}</p>
             <p class="text-xs text-right">{{ selected.legendary ? '' : 'Not ' }}Legendary</p>
           </div>
-          <img height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.ref_number}.png`" :alt="selected.name">
+          <img v-if="selected.ref_number" height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.ref_number}.png`" :alt="selected.name">
         </div>
         <article class="border-2 border-solid border-white md:w-full lg:w-1/2 p-5 lg:h-full">
           <h1 class="xs:text-xs font-bold text-center text-xl">{{ selected.name }}</h1>
