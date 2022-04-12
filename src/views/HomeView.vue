@@ -2,8 +2,8 @@
   <div class="flex-1 flex lg:flex-col justify-between items-center overflow-hidden">
     <div class="sm:py-0 lg:w-full w-7/12 flex flex-col overflow-hidden xl:p-5 p-10 lg:h-1/2 h-full">
       <input class="xs:text-xs mb-5 w-full outline-none bg-white text-black border-2 border-solid border-black rounded-md px-5 py-2" type="text" placeholder="search" @input="paginate(0)" v-model="searchInput">
-      <section class="grid grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 auto-rows-min flex-1 overflow-y-scroll overflow-x-hidden w-full gap-3">
-        <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokedex" :key="pokemon.id" :pokemon="pokemon" />
+      <section class="snap-y grid grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 auto-rows-min flex-1 overflow-y-scroll overflow-x-hidden w-full gap-3">
+        <Pokemon :class="{'opacity-50': selected === pokemon}" @click="openDetails(pokemon)" v-for="pokemon in pokedex" :key="pokemon.id" :pokemon="pokemon" :ref_number="pokemon.ref_number" />
       </section>
       <div class="flex items-center justify-between mt-5 w-full">
         <button class="xs:text-xs button" v-if="hasPrev !== null" type="button" @click="paginate(-50)">prev</button>
@@ -18,7 +18,7 @@
             <p class="text-2xl">#{{ selected.id }}</p>
             <p class="text-xs text-right">{{ selected.legendary ? '' : 'Not ' }}Legendary</p>
           </div>
-          <img height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.id}.png`" :alt="selected.name">
+          <img height="200" width="200" class="mx-auto" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.ref_number}.png`" :alt="selected.name">
         </div>
         <article class="border-2 border-solid border-white md:w-full lg:w-1/2 p-5 lg:h-full">
           <h1 class="xs:text-xs font-bold text-center text-xl">{{ selected.name }}</h1>
@@ -33,7 +33,7 @@
             </div>
           </div>
 
-          <button v-if="user.id !== null" type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-5 px-4 py-1 bg-custom hover:opacity-75" @click.prevent="addPokemon">Add to my pokedex</button>
+          <button v-if="user.id !== null" type="button" class="sm:text-sm xs:text-xs text-white button cursor-pointer w-full border-2 border-solid border-black mt-5 px-4 py-1 bg-custom hover:opacity-75" @click.prevent="addPokemon(selected.id)">Add to my pokedex</button>
           <div class="flex items-end justify-between lg:w-[unset] w-full text-xs mt-5 lg:mt-full">
             <p>Generation : {{ selected.generation }}</p>
           </div>
@@ -48,8 +48,7 @@ import { onMounted, ref } from 'vue'
 import { pokedex as action } from '@/repositories/pokedex'
 import Pokemon from '@/components/Pokemon'
 import { me } from '@/repositories/auth'
-//  import { add } from '@/repositories/pokemon'
-//  import { me } from '@/repositories/auth'
+import { add } from '@/repositories/pokemon'
 
 const selected = ref({})
 const offset = ref(0)
@@ -61,6 +60,10 @@ const user = ref({})
 
 const openDetails = async pokemon => {
   selected.value = pokemon
+}
+
+const addPokemon = async id => {
+  add({ pokedex_creature: id, trainer: (await me()).id })
 }
 
 const paginate = async nb => {

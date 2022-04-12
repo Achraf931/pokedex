@@ -10,6 +10,16 @@ export const pokemons = async aggregation => {
   }
 }
 
+export const getPokemon = async id => {
+  try {
+    return (
+      await get(`pokemon/${id}`)
+    ).data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export const add = async pokemon => {
   try {
     return (
@@ -40,7 +50,7 @@ export const partialUpdate = async pokemon => {
   }
 }
 
-export const remove = async id => {
+export const remove = async ({ id }) => {
   try {
     await del(`pokemon/${id}/`)
   } catch (e) {

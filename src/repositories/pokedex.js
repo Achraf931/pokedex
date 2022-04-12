@@ -9,3 +9,13 @@ export const pokedex = async aggregation => {
     console.log(e)
   }
 }
+
+export const getPokemon = async id => {
+  try {
+    return (
+      await get(`pokedex/${id}`)
+    ).data
+  } catch (e) {
+    console.log(e)
+  }
+}
