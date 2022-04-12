@@ -8,7 +8,11 @@ export const register = async (user) => {
       await post('api/token/', { username: user.username, password: user.password })
     ).data
   } catch (e) {
-    throw new PartialCredError(e.response.data)
+    if (e.response.status === 500) {
+      throw new Error('This account already exists!')
+    } else {
+      throw new PartialCredError(e.response.data)
+    }
   }
 }
 
